@@ -1,0 +1,13 @@
+{
+  "name": "forkity",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": ["frontend", "backend"],
+  "scripts": {
+    "dev": "concurrently -k -n api,web -c green,cyan \"npm run dev --workspace backend\" \"npm run dev --workspace frontend\"",
+    "start": "npm run start --workspace backend",
+    "build": "npm run build --workspace frontend",
+    "preview": "npm run preview --workspace frontend"
+  },
+  "devDependencies": { "concurrently": "^9.1.2" }
+}
