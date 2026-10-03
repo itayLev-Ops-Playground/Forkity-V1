@@ -1,0 +1,40 @@
+flowchart LR
+    BROWSER["User's browser<br/>React single-page app"]
+
+    subgraph HOST["Linux host"]
+        subgraph COMPOSE["Docker Compose"]
+            FRONTEND["Frontend container<br/>Nginx serves React<br/>Proxies /api"]
+            BACKEND["Backend container<br/>Node.js + Express<br/>REST API :4000"]
+            DATABASE[("PostgreSQL 17<br/>users, sessions, recipes, bookmarks<br/>TCP :5432")]
+            VOLUME[("Named volume<br/>postgres-data")]
+
+            FRONTEND <-->|"HTTP /api reverse proxy"| BACKEND
+            BACKEND <-->|"SQL via pg"| DATABASE
+            DATABASE -->|"persists data"| VOLUME
+        end
+
+        SQLITE[("Optional SQLite file<br/>backend/data/forkity.db")]
+    end
+
+    MEALDB["TheMealDB API"]
+
+    BROWSER <-->|"HTTP published port<br/>8080 by default"| FRONTEND
+    BACKEND <-->|"HTTPS recipe search"| MEALDB
+    SQLITE -.->|"read-only mount; imported on startup<br/>when PostgreSQL is empty"| BACKEND
+
+    classDef client fill:#eaf2ff,stroke:#526b8a,color:#172b4d
+    classDef frontend fill:#e4f5ed,stroke:#388263,color:#173b2d
+    classDef backend fill:#e8f0fb,stroke:#476a9b,color:#1a3152
+    classDef data fill:#fff0d9,stroke:#b9792b,color:#493016
+    classDef external fill:#fce8e6,stroke:#bd5a4a,color:#542a24
+    classDef legacy fill:#f1f3f5,stroke:#667085,color:#344054
+
+    class BROWSER client
+    class FRONTEND frontend
+    class BACKEND backend
+    class DATABASE,VOLUME data
+    class MEALDB external
+    class SQLITE legacy
+
+    style HOST fill:#f8fafc,stroke:#94a3b8,stroke-dasharray:5 5
+    style COMPOSE fill:#ffffff,stroke:#64748b,stroke-width:2px

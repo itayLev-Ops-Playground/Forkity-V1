@@ -15,11 +15,23 @@ The browser loads the React frontend from the Nginx frontend container. Nginx pr
 
 ![Forkity application architecture](docs/architecture.png)
 
-The editable Mermaid source is in [docs/architecture.md](docs/architecture.md).
+The editable Mermaid source is in [docs/architecture.mmd](docs/architecture.mmd), with request-flow notes in [docs/architecture.md](docs/architecture.md).
 
 ## Run with Docker
 
 Requirements: Docker Engine with Linux containers and Docker Compose v2.
+
+For automatic setup on Ubuntu/Debian or Rocky Linux, run the matching script from the project root:
+
+```sh
+./linux_scripts/ubuntu_script.sh
+```
+
+```sh
+./linux_scripts/rocky_script.sh
+```
+
+The scripts install Docker when needed, prepare `.env`, build the containers, and start the application. Open `http://localhost:8080` (or the port set by `FORKITY_PORT` in `.env`). For manual setup steps, see [LINUX_COMMANDS.md](LINUX_COMMANDS.md).
 
 Create the local environment file, then replace its example database password with a strong random value:
 
@@ -66,6 +78,7 @@ On first startup, if the PostgreSQL volume is empty and `backend/data/forkity.db
 ```text
 frontend/       React app, custom styles, Nginx config, and image build
 backend/        Express API, PostgreSQL access, SQLite importer, and image build
+linux_scripts/  Automated Docker setup and launch scripts for Ubuntu and Rocky Linux
 compose.yaml    Three-service Linux container stack
 docs/           Architecture diagram and its source
 ```

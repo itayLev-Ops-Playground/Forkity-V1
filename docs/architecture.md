@@ -1,30 +1,20 @@
-# Forkity Container Architecture
+# Forkity Application Architecture
 
-![Forkity architecture diagram](architecture.png)
+![Forkity application architecture](architecture.png)
 
-```mermaid
-flowchart LR
-    User[User's browser] --> FE[Nginx + React frontend<br/>Linux container]
-    FE -->|/api reverse proxy| BE[Node.js + Express<br/>Linux container]
-    BE -->|Users, sessions, recipes, bookmarks| DB[(PostgreSQL<br/>Linux container + named volume)]
-    BE -->|Search online recipes| EXT[TheMealDB]
-    EXT -->|Recipe results| BE
+Editable Mermaid source: [architecture.mmd](architecture.mmd).
 
-    subgraph Docker Compose on Linux
-        FE
-        BE
-        DB
-    end
-```
+## Request and data flow
 
-## Request flow
-
-- Nginx serves the built React frontend and proxies `/api` requests to Express.
-- The backend handles sign-in, online recipe searches, and personal recipe operations.
-- The backend stores users and sessions, and reads and writes recipes and bookmarks for the signed-in user in PostgreSQL.
-- The backend calls TheMealDB for online search results and returns them to the frontend.
-- A named Docker volume persists PostgreSQL data across container restarts.
+- Nginx serves the built React application and proxies browser `/api` requests to the Express API on port 4000.
+- The backend uses `pg` to read and write users, sessions, recipes, and bookmarks in PostgreSQL over the Compose network.
+- Online recipe searches go from the backend to TheMealDB over HTTPS; results return through the API to the browser.
+- PostgreSQL data persists in the `postgres-data` named volume. Compose starts the backend after the database health check and the frontend after the backend health check.
 
 ## Existing SQLite data
 
-If PostgreSQL is empty and the local SQLite file is available, the backend imports accounts, recipes, and bookmarks during startup. Sessions are not migrated. Terraform, Kubernetes, and the Jenkins pipeline belong to the separate deployment repository.
+If PostgreSQL is empty and `backend/data/forkity.db` exists, Compose mounts it read-only into the backend container. The backend imports users, recipes, and bookmarks at startup; sessions are not imported.
+
+## Local development
+
+With `npm run dev`, Vite and the backend run on the development machine. Vite serves the frontend on port 5173 and proxies `/api` to the backend on port 4000. PostgreSQL can still run in Docker, published to `127.0.0.1:5432` for local access.

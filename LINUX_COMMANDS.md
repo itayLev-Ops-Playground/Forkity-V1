@@ -1,7 +1,11 @@
 # Run Forkity on Linux
-- Run ubuntu_script.sh if on a Ubuntu Linux machine. Run './ubuntu_script.sh'
-- This will install all application requierments and run the containers.
-- Then open your browser. Paste 'http://localhost:5173' in the browser address bar. 
+
+For automatic setup, run the script for your Linux distribution from the project root:
+
+- Ubuntu or Debian: `./linux_scripts/ubuntu_script.sh`
+- Rocky Linux: `./linux_scripts/rocky_script.sh`
+
+The script installs Docker if needed, prepares `.env`, builds the containers, and starts the application. Open [http://localhost:8080](http://localhost:8080), or use the port configured by `FORKITY_PORT` in `.env`.
 
 ## Requirements
 
